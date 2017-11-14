@@ -1,0 +1,30 @@
+{
+  "name": "mean-blog",
+  "version": "1.0.0",
+  "description": "Mean blog with angular 4",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jl8stt/Mean-with-angular4-blog.git"
+  },
+  "keywords": [
+    "Mean",
+    "Blog",
+    "Angular",
+    "4",
+    "Application"
+  ],
+  "author": "jl8stt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jl8stt/Mean-with-angular4-blog/issues"
+  },
+  "homepage": "https://github.com/jl8stt/Mean-with-angular4-blog#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "mongoose": "^4.13.2"
+  }
+}
