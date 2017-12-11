@@ -1,0 +1,85 @@
+<div [ngClass]="messageClass">
+    {{message}}
+</div>
+
+
+<form [formGroup]="userForm" (ngSubmit)="userSubmit(userForm.value)">
+  <div class="form-group">
+    <label>UserName</label>
+    <input (blur)="checkUsername(userForm.value.username)" type="text" class="form-control" formControlName="username">
+  </div>
+  <div *ngIf="userForm.controls.username.dirty">
+    <div *ngIf="userForm.controls['username'].hasError('required')" class="alert alert-danger" >
+      Please enter a username
+    </div>
+    <div *ngIf="userForm.controls['username'].hasError('minlength')" class="alert alert-danger">
+      Please enter at least 5 characters
+    </div>
+    <div *ngIf="userForm.controls['username'].hasError('maxlength')" class="alert alert-danger">
+      Please enter no more than  15 characters
+    </div>
+    <div *ngIf="userForm.controls['username'].hasError('validUsernameChecker')" class="alert alert-danger">
+      Must be valid username
+    </div>
+    <div *ngIf="usernameMessage">
+      <div *ngIf="!usernameValid" class="alert alert-danger">
+        {{usernameMessage}}
+      </div>
+      <div *ngIf="usernameValid" class="alert alert-success">
+        {{usernameMessage}}
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>E-mail</label>
+    <input (blur)="checkEmail(userForm.value.email)" type="email" class="form-control" formControlName="email">
+  </div>
+  <div *ngIf="userForm.controls.email.dirty">
+    <div *ngIf="userForm.controls['email'].hasError('required')" class="alert alert-danger">
+      Please enter a email address
+    </div>
+    <div *ngIf="userForm.controls['email'].hasError('minlength')" class="alert alert-danger">
+      Please enter at least 5 characters
+    </div>
+    <div *ngIf="userForm.controls['email'].hasError('maxlength')" class="alert alert-danger">
+      Please enter no more than  30 characters
+    </div>
+    <div *ngIf="userForm.controls['email'].hasError('validEmailChecker')" class="alert alert-danger">
+      Must be valid email
+    </div>
+    <div *ngIf="emailMessage">
+      <div *ngIf="!emailValid" class="alert alert-danger">
+       {{emailMessage}}
+      </div>
+      <div *ngIf="emailValid" class="alert alert-success">
+        {{emailMessage}}
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Password</label>
+    <input type="password" class="form-control" formControlName="password">
+  </div>
+  <div *ngIf="userForm.controls.password.dirty">
+    <div *ngIf="userForm.controls['password'].hasError('required')" class="alert alert-danger">
+      Please enter a password
+    </div>
+    <div *ngIf="userForm.controls['password'].hasError('minlength')" class="alert alert-danger">
+      Please enter at least 6 characters
+    </div>
+    <div *ngIf="userForm.controls['password'].hasError('maxlength')" class="alert alert-danger">
+      Please enter no more than  16 characters
+    </div>
+    <div *ngIf="userForm.controls['password'].hasError('validPasswordChecker')" class="alert alert-danger">
+      Must be valid password
+    </div>
+   </div>
+  <div class="form-group">
+    <label>Confirm Password</label>
+    <input type="password" class="form-control" formControlName="confirmPassword">
+   </div>
+  <div *ngIf="userForm.hasError('matchingPassword')" class="alert alert-danger">
+    password don't match
+  </div>
+  <button [disabled]="userForm.invalid || processing || !usernameValid || !emailValid" type="submit" class="btn btn-info">Submit</button>
+</form>

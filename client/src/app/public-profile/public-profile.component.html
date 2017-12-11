@@ -1,0 +1,12 @@
+<h1 class="page-header">Public Profile</h1>
+<div *ngIf="message">
+  <div [ngClass]="messageClass">
+    {{message}}
+  </div>
+</div>
+
+
+<div *ngIf="user">
+  <p><strong>Username: </strong> {{user.username}}</p>
+  <p><strong>E-mail: </strong> {{user.email}}</p>
+</div>

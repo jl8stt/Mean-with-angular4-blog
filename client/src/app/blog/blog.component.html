@@ -1,0 +1,130 @@
+<h1 class="page-header">Blog Feed</h1>
+<div [ngClass]="messageClass" *ngIf="message && newPost">
+  {{message}}
+</div>
+<button *ngIf="!newPost" (click)="newBlogForm()" class="btn btn-warning">New Post</button>
+<button  *ngIf="!newPost" (click)="reloadBlogs()" [disabled]="loadingBlogs" class="btn btn-default"><span class="glyphicon glyphicon-repeat"></span>&nbsp;&nbsp;Reload</button>
+<br /><br />
+
+<!-- newPost form -->
+<form *ngIf="newPost" [formGroup]="blogForm" (ngSubmit)="blogSubmit(blogForm.value)">
+  <div class="form-group">
+    <label>title</label>
+    <input type="text" class="form-control" formControlName="title">
+  </div>
+  <div *ngIf="blogForm.controls['title'].dirty">
+    <div *ngIf="blogForm.controls['title'].hasError('required')" class="alert alert-danger">
+      please enter a title
+    </div>
+    <div *ngIf="blogForm.controls['title'].hasError('minlength')" class="alert alert-danger">
+      please enter at least 5 characters
+    </div>
+    <div *ngIf="blogForm.controls['title'].hasError('maxlength')" class="alert alert-danger">
+      please enter less than 30 characters
+    </div>
+    <div *ngIf="blogForm.controls['title'].hasError('alphaNumericValidation')" class="alert alert-danger">
+      title only consist of letter and numbers
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>body</label>
+    <textarea type="text" rows="10" cols="30" class="form-control" formControlName="body"></textarea>
+  </div>
+  <div *ngIf="blogForm.controls['body'].dirty">
+    <div *ngIf="blogForm.controls['body'].hasError('required')" class="alert alert-danger">
+      please enter a comment
+    </div>
+    <div *ngIf="blogForm.controls['body'].hasError('minlength')" class="alert alert-danger">
+      please enter at least 10 characters
+    </div>
+    <div *ngIf="blogForm.controls['body'].hasError('maxlength')" class="alert alert-danger">
+      please enter less than 500 characters
+    </div>
+  </div>
+  <button [disabled]="processing" class="btn btn-warning" (click)="goBack()">go Back</button>
+  <button [disabled]="blogForm.invalid || processing" class="btn btn-success" >Submit</button>
+</form>
+
+
+<div *ngIf="!newPost && allBlogs">
+  <div class="panel panel-primary" *ngFor="let blog of allBlogs">
+    <div class="panel-heading">
+      <h3 class="panel-title">{{blog.title}}</h3>
+    </div>
+    <div class="panel-body">
+      {{blog.body}}
+    </div>
+
+    <!--footer start -->
+    <div *ngIf="username" class="panel-footer">
+      <p><strong>Post by: </strong>{{blog.createdBy}}</p>
+      <p><strong>date: </strong>{{blog.createdAt | date: 'MMM dd, yyyy'}}</p>
+      <div *ngIf="username===blog.createdBy">
+        <p><strong>likes: </strong>{{blog.likes}}</p>
+        <p><strong>dislkes: </strong>{{blog.dislikes}}</p>
+      </div>
+      <button *ngIf="username===blog.createdBy" [routerLink]="['editblog', blog._id]" class="btn btn-success">Edit</button>
+      <button *ngIf="username===blog.createdBy" [routerLink]="['deleteblog', blog._id]" class="btn btn-danger">delete</button>
+      <a *ngIf="username!==blog.createdBy" dropdown class="dropdown">
+        <button [disabled]="blog.likedBy.indexOf(username) > -1" (click)="likeBlog(blog._id)" class="dropbtn"><span class="glyphicon glyphicon-thumbs-up"></span>&nbsp;&nbsp;likes: {{blog.likes}}</button>
+        <div class="dropdown-content">
+          <a [routerLink]="['publicProfile', liker]" *ngFor="let liker of blog.likedBy">{{liker}}</a>
+        </div>
+      </a>
+      <a *ngIf="username!=blog.createdBy" class="dropdown">
+        <button  [disabled]="blog.dislikedBy.indexOf(username) > -1" (click)="dislikeBlog(blog._id)" class="dropbtn2"><span class="glyphicon glyphicon-thumbs-down"></span>&nbsp;&nbsp;dislikes: {{blog.dislikes}}</button>
+        <div class="dropdown-content">
+          <a [routerLink]="['publicProfile', disliker]" *ngFor="let disliker of blog.dislikedBy">{{disliker}}</a>
+        </div>
+      </a>
+    </div>
+    <!--footer end -->
+
+    <ul class="list-group">
+      <li class="list-group-item">
+        <button (click)="draftComment(blog._id)" [disabled]="newComment.indexOf(blog._id)>-1" class="btn btn-danger">Post Comment</button>
+
+        <br><br>
+
+        <form  *ngIf="newComment.indexOf(blog._id) > -1" [formGroup]="commentForm " (ngSubmit)="postComment(blog._id, commentForm.value)" >
+          <textarea cols="30" rows="10" class="form-control" formControlName="comment"></textarea>
+          <div *ngIf="commentForm.controls.comment.dirty">
+            <div *ngIf="commentForm.controls['comment'].hasError('required')" class="alert alert-danger">
+              please enter comment
+            </div>
+            <div *ngIf="commentForm.controls['comment'].hasError('minlength')" class="alert alert-danger">
+              please enter at least 10 characters
+            </div>
+            <div *ngIf="commentForm.controls['comment'].hasError('maxlength')" class="alert alert-danger">
+              please enter less than 200 characters
+            </div>
+          </div>
+
+          <br>
+
+          <button [disabled]="commentForm.invalid || processing" class="btn btn-sm btn-info">Submit</button>
+          <button [disabled]="processing" (click)="cancel(blog._id)" class="btn btn-sm btn-danger">Cancel</button>
+        </form>
+      </li>
+
+      <li *ngIf="enabledComments.indexOf(blog._id) === -1 && blog.comments.length > 0" class="list-group-item">
+        <span (click)="expand(blog._id)">
+          Show comments&nbsp;&nbsp;
+          <div class="glyphicon glyphicon-comment"></div>
+        </span>
+      </li>
+      <li *ngIf="enabledComments.indexOf(blog._id) >-1" class="list-group-item">
+        <span (click)="collapse(blog._id)">
+          Hide comments&nbsp;&nbsp;
+          <div class="glyphicon glyphicon-comment"></div>
+        </span>
+      </li>
+      <div *ngIf="enabledComments.indexOf(blog._id) >-1">
+        <li *ngFor="let comment of blog.comments" class="list-group-item">
+            <strong>{{comment.commentator}}: </strong>{{comment.comment}}
+        </li>
+      </div>
+    </ul>
+  </div>
+ </div>
