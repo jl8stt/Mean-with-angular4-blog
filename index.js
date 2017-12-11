@@ -9,7 +9,7 @@ const path = require('path');
 //mongoose module for database connect
 const mongoose = require('mongoose');
 const config = require('./config/database');
-const port = process.env.Port || 8080;
+const port = process.env.PORT || 8080;
 
 //middleware module for database post
 const bodyParser = require('body-parser');
