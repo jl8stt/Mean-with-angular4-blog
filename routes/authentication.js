@@ -42,10 +42,7 @@ module.exports = (router) => {
                 }
               }
           } else {
-            const token = jwt.sign(
-              {userId: user._id}, config.secret, {expiresIn: '24h'}
-            )
-            res.json({success: true, message: 'user saved!', token:token, user:{username: user.username}})
+            res.json({success: true, message: 'user saved!'})
           }
         })
       }
